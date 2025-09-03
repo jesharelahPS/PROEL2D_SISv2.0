@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- LEFT PANEL -->
+        <div class="left">
+            <img src="img/logo.png" alt="ACT Logo" class="logo">
+            <h1>ACADEMY OF COMMITTED TSISMIS</h1>
+            <p class="tagline">Setenta, Jesharelah P. - IT504</p>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="right">
+            <h2 class="login-title">Account Login</h2>
+
+            <div class="floating">
+                <input type="text" id="username" required placeholder=" ">
+                <label>Username</label>
+            </div>
+
+            <div class="floating password-container">
+                <input type="password" id="password" required placeholder=" ">
+                <label>Password</label>
+                <i class="toggle-password fas fa-eye-slash" id="togglePassword"></i>
+            </div>
+
+
+            <a class="forgot" id="forgot">Forgot Password?</a>
+            <p id="lockoutMessage" class="lockout-message"></p>
+            <button id="btnLogin">Login</button>
+        </div>
+    </div>
+
+    <script>
+        // Elements
+        const btnLogin = document.getElementById("btnLogin");
+        const lockoutMessage = document.getElementById("lockoutMessage");
+        const togglePassword = document.getElementById("togglePassword");
+        const passwordInput = document.getElementById("password");
+
+        // Lockout variables
+        let attempts = 0;
+        let isLockedOut = false;
+        let lockoutEndTime = null;
+        const lockoutDuration = 60 * 1000; // 1 min for testing
+
+        // Toggle password visibility
+        togglePassword.addEventListener("click", () => {
+            const isHidden = passwordInput.type === "password";
+            passwordInput.type = isHidden ? "text" : "password";
+            togglePassword.classList.toggle("fa-eye");
+            togglePassword.classList.toggle("fa-eye-slash");
+        });
+
+        // Forgot password handler
+        document.getElementById("forgot").addEventListener("click", () => {
+            window.chrome.webview.postMessage(JSON.stringify({ type: "forgot" }));
+        });
+
+        // Login button handler
+        btnLogin.addEventListener("click", () => {
+            if (isLockedOut) return; 
+
+            const username = document.getElementById("username").value.trim();
+            const password = passwordInput.value.trim();
+
+            if (!username || !password) {
+                
+                window.chrome.webview.postMessage(JSON.stringify({
+                    type: "login",
+                    username: username,
+                    password: password
+                }));
+                return;
+            }
+
+            window.chrome.webview.postMessage(JSON.stringify({
+                type: "login",
+                username: username,
+                password: password
+            }));
+        });
+
+        // Start lockout
+        function startLockout(endTime) {
+            isLockedOut = true;
+            lockoutEndTime = endTime;
+            btnLogin.disabled = true;
+            updateCountdown();
+
+            const interval = setInterval(() => {
+                if (!isLockedOut) {
+                    clearInterval(interval);
+                    return;
+                }
+                updateCountdown();
+            }, 1000);
+        }
+
+
+        // Update countdown
+        function updateCountdown() {
+            const remaining = lockoutEndTime - Date.now();
+            if (remaining <= 0) {
+                isLockedOut = false;
+                attempts = 0;
+                btnLogin.disabled = false;
+                lockoutMessage.textContent = "";
+                return;
+            }
+
+            // Convert milliseconds to hh:mm:ss
+            let totalSeconds = Math.floor(remaining / 1000);
+            let hours = Math.floor(totalSeconds / 3600);
+            let minutes = Math.floor((totalSeconds % 3600) / 60);
+            let seconds = totalSeconds % 60;
+
+            // Pad with 0
+            hours = hours.toString().padStart(2, '0');
+            minutes = minutes.toString().padStart(2, '0');
+            seconds = seconds.toString().padStart(2, '0');
+
+            lockoutMessage.textContent = `⚠️ Locked out! Try again in ${hours}:${minutes}:${seconds}`;
+        }
+
+
+        // Listen for messages from C#
+        if (window.chrome && window.chrome.webview) {
+            window.chrome.webview.addEventListener("message", event => {
+                try {
+                    const msg = JSON.parse(event.data);
+
+                    if (msg.type === "clear") {
+                        document.getElementById("username").value = "";
+                        document.getElementById("password").value = "";
+                    }
+
+                    if (msg.type === "lockout") {
+                        const lockoutEnd = new Date(msg.until).getTime();
+                        startLockout(lockoutEnd);
+                    }
+                } catch (err) {
+                    console.error("Invalid message from C#:", err);
+                }
+            });
+        }
+
+
+
+
+    </script>
+
+</body>
+
+</html>

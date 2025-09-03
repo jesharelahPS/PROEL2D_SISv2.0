@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - ACT</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="dashboard-wrapper"> <!-- SIDEBAR -->
+        <aside id="sidebar" class="sidebar"> <button class="burger-btn" onclick="toggleSidebar()"><i
+                    class="fas fa-bars"></i></button>
+            <ul class="sidebar-menu">
+                <li class="menu-item" onclick="showPage('dashboardPage')">
+                    <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
+                </li>
+                <li class="menu-item" onclick="showPage('studentsPage')">
+                    <i class="fas fa-user-graduate"></i><span>Students</span>
+                </li>
+                <li class="menu-item" onclick="showPage('teachersPage')">
+                    <i class="fas fa-user-tie"></i><span>Teachers</span>
+                </li>
+                <li class="menu-item" onclick="showPage('coursesPage')">
+                    <i class="fas fa-book"></i><span>Courses</span>
+                </li>
+                <li class="menu-item" onclick="showPage('reportsPage')">
+                    <i class="fas fa-chart-line"></i><span>Reports</span>
+                </li>
+                <li class="menu-item" onclick="showPage('logsPage')">
+                    <i class="fas fa-history"></i><span>Logs</span>
+                </li>
+                <li class="menu-item" onclick="showPage('archivesPage')">
+                    <i class="fas fa-archive"></i><span>Archives</span>
+                </li>
+
+            </ul>
+        </aside>
+
+        <!-- MAIN AREA -->
+        <div class="main-area">
+
+            <!-- NAVBAR -->
+            <div class="navbar">
+                <div class="brand"> <img src="img/logo.png" class="nav-logo" alt="ACT Logo"> <span
+                        class="school-name">ACADEMY OF COMMITTED TSISMIS</span> </div>
+                <div class="nav-profile"> <span class="username">Welcome, ######</span> <img
+                        src="img/img_placeholder.png" class="profile-pic" onclick="toggleDropdown()">
+                    <div id="profileDropdown" class="dropdown-content"> <a href="#">Notifications</a> <a
+                            href="#">Account Settings</a> <a href="#" onclick="logout()">Logout</a> </div>
+                </div>
+            </div>
+
+
+
+
+
+            <!-- MAIN CONTENT -->
+            <main class="main-content">
+
+
+                <!-- DASHBOARD PAGE -->
+                <section id="dashboardPage">
+                    <h2>Admin Dashboard</h2>
+                    <p>Welcome to ACT’s Student Information System.</p>
+
+                    <!-- WIDGETS -->
+                    <div class="widgets">
+                        <div class="widget"> <i class="fas fa-user-graduate"></i>
+                            <div class="widget-info"> <span class="widget-number" id="totalStudents">0</span> <span
+                                    class="widget-label">Students</span> </div>
+                        </div>
+                        <div class="widget"> <i class="fas fa-chalkboard-teacher"></i>
+                            <div class="widget-info"> <span class="widget-number" id="totalTeachers">0</span> <span
+                                    class="widget-label">Teachers</span> </div>
+                        </div>
+                        <div class="widget"> <i class="fas fa-book"></i>
+                            <div class="widget-info"> <span class="widget-number" id="totalCourses">0</span> <span
+                                    class="widget-label">Courses</span> </div>
+                        </div>
+                    </div>
+
+                    <!-- CHARTS -->
+                    <div class="charts" style="display: flex; flex-wrap: wrap; gap: 30px; margin-top: 30px;">
+                        <div
+                            style="flex:1; min-width:300px; max-width:450px; background:#fff8e1; padding:20px; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.08); height:350px;">
+                            <canvas id="pieChart"></canvas>
+                        </div>
+                        <div
+                            style="flex:1; min-width:300px; max-width:450px; background:#fff8e1; padding:20px; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.08); height:350px;">
+                            <canvas id="barChart"></canvas>
+                        </div>
+                        <div
+                            style="flex:1; min-width:300px; max-width:950px; background:#fff8e1; padding:20px; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.08); height:350px;">
+                            <canvas id="lineChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+
+
+
+                <!-- STUDENTS PAGE -->
+                <section id="studentsPage" class="hidden">
+                    <h2>Students</h2>
+                    <p>Manage student records here.</p>
+
+                    <div class="table-actions">
+                        <div class="search-container">
+                            <input type="text" id="searchInput" class="search-input" placeholder="Search students...">
+                            <button class="search-btn"><i class="fas fa-search"></i></button>
+                        </div>
+
+                        <div class="filter-sort-add">
+                            <span>
+                                <label for="filterStatus" class="filter-label">Status: </label>
+                                <select id="filterStatus" class="filter-select">
+                                    <option value="all">All</option>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </span>
+
+                            <button class="add-btn" onclick="addStudent()">
+                                <i class="fas fa-plus"></i> Add Student
+                            </button>
+
+                            <button class="delete-btn" id="bulkDeleteBtn" disabled>
+                                <i class="fas fa-trash" style="margin-right: 3px;"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAll"></th>
+                                    <th>Student ID <i class="fas fa-sort"></i></th>
+                                    <th>First Name <i class="fas fa-sort"></i></th>
+                                    <th>Last Name <i class="fas fa-sort"></i></th>
+                                    <th>Date of Birth <i class="fas fa-sort"></i></th>
+                                    <th>Age <i class="fas fa-sort"></i></th>
+                                    <th>Gender</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Address</th>
+                                    <th>Enrollment Date <i class="fas fa-sort"></i></th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentTableBody">
+                                <tr>
+                                    <td><input type="checkbox" class="row-select"></td>
+                                    <td>123</td>
+                                    <td>Jane</td>
+                                    <td>Doe</td>
+                                    <td>2000-01-01</td>
+                                    <td>23</td>
+                                    <td>Female</td>
+                                    <td>jane@example.com</td>
+                                    <td>09123456789</td>
+                                    <td>123 Street</td>
+                                    <td>2021-06-15</td>
+                                    <td>Active</td>
+                                    <td>
+                                        <button class="edit" onclick="editStudent(this)"><i
+                                                class="fas fa-edit"></i></button>
+                                        <button class="delete" onclick="deleteStudent(this)"><i
+                                                class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <!-- PAGINATION -->
+                    <div class="pagination" id="pagination"></div>
+
+                    <!-- ADD STUDENT MODAL -->
+                    <div id="addStudentModal" class="modal">
+                        <div class="modal-content">
+                            <h2>Add / Edit Student</h2>
+
+                            <div class="modal-scroll-area">
+                                <!-- PHOTO -->
+                                <div class="photo-preview-container">
+                                    <img id="photoPreview" src="img/img_placeholder.png" alt="Student Photo">
+                                    <label class="choose-file-btn">Upload Photo
+                                        <input type="file" id="photo" accept="image/*" />
+                                    </label>
+                                </div>
+
+                                <h4 class="section-title">PERSONAL INFORMATION</h4>
+                                <div class="modal-grid">
+                                    <div class="left-column">
+                                        <div class="form-group">
+                                            <label>Student ID</label>
+                                            <input type="text" id="studentId" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>First Name</label>
+                                            <input type="text" id="firstName" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Last Name</label>
+                                            <input type="text" id="lastName" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="right-column">
+                                        <div class="form-group">
+                                            <label>Date of Birth</label>
+                                            <input type="text" id="dob" placeholder="YYYY-MM-DD" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Age</label>
+                                            <input type="text" id="age" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Gender</label>
+                                            <select id="gender" required>
+                                                <option value="">Select gender</option>
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="separator"></div>
+                                <h4 class="section-title">ACCOUNT DETAILS</h4>
+
+                                <div class="modal-grid">
+                                    <div class="left-column">
+                                        <div class="form-group">
+                                            <label>Email</label>
+                                            <input type="email" id="email" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Phone</label>
+                                            <input type="text" id="phone" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Username</label>
+                                            <input type="text" id="username" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="right-column">
+                                        <div class="form-group">
+                                            <label>Enrollment Date</label>
+                                            <input type="text" id="enrollmentDate" placeholder="YYYY-MM-DD" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Address</label>
+                                            <input type="text" id="address" required>
+                                        </div>
+                                        <div class="form-group password-group">
+                                            <label>Password</label>
+                                            <input type="password" id="password" required>
+                                            <i class="fas fa-eye toggle" onclick="togglePW('password',this)"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal-buttons">
+                                <button type="submit" class="add-btn">Add Student</button>
+                                <button type="button" class="cancel-btn" onclick="closeAddModal()">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+
+
+
+                <!-- Teachers -->
+                <section id="teachersPage" class="hidden">
+                    <h2>Teachers</h2>
+                    <p>Manage teacher records here.</p>
+
+                    <!-- ACTIONS: Search | Filter | Sort | Add -->
+                    <div class="table-actions">
+                        <!-- SEARCH -->
+                        <div class="search-container">
+                            <input type="text" id="searchTeacherInput" class="search-input"
+                                placeholder="Search teachers...">
+                            <button class="search-btn"><i class="fas fa-search"></i></button>
+                        </div>
+
+                        <!-- FILTER | SORT | ADD -->
+                        <div class="filter-sort-add">
+                            <!-- STATUS FILTER -->
+                            <span>
+                                <label for="" class="filter-label">Filter: </label>
+                                <select id="filterTeacherStatus" class="filter-select">
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </span>
+
+                            <!-- ADD TEACHER BUTTON -->
+                            <button class="add-btn" onclick="addTeacher()">
+                                <i class="fas fa-plus"></i> Add Teacher
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- TEACHERS TABLE -->
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllTeachers"></th>
+                                    <th>Teacher ID <i class="fas fa-sort"></i></th>
+                                    <th>First Name <i class="fas fa-sort"></i></th>
+                                    <th>Last Name <i class="fas fa-sort"></i></th>
+                                    <th>Date of Birth</th>
+                                    <th>Age</th>
+                                    <th>Gender</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Hire Date <i class="fas fa-sort"></i></th>
+                                    <th>Department</th>
+                                    <th>Specialization</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teacherTableBody">
+                                <tr>
+                                    <td><input type="checkbox" class="row-select"></td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>
+                                        <button class="edit" onclick="editTeacher(this)"><i
+                                                class="fas fa-edit"></i></button>
+                                        <button class="delete" onclick="deleteTeacher(this)"><i
+                                                class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- ADD TEACHER MODAL -->
+                    <div id="addTeacherModal" class="modal">
+                        <div class="modal-content">
+                            <h2>Add New Teacher</h2>
+
+                            <div class="modal-scroll-area">
+                                <!-- PHOTO -->
+                                <div class="photo-preview-container">
+                                    <img id="teacherPhotoPreview" src="img/img_placeholder.png" alt="Teacher Photo">
+                                    <label class="choose-file-btn">Upload Photo
+                                        <input type="file" id="teacherPhoto" accept="image/*" />
+                                    </label>
+                                </div>
+
+                                <h4 class="section-title">PERSONAL INFORMATION</h4>
+                                <div class="modal-grid">
+                                    <div class="left-column">
+                                        <div class="form-group">
+                                            <label>Teacher ID</label>
+                                            <input type="text" id="teacherId" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>First Name</label>
+                                            <input type="text" id="teacherFirstName" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Last Name</label>
+                                            <input type="text" id="teacherLastName" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="right-column">
+                                        <div class="form-group">
+                                            <label>Date of Birth</label>
+                                            <input type="text" id="teacherDob" placeholder="YYYY-MM-DD" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Gender</label>
+                                            <select id="teacherGender" required>
+                                                <option value="">Select gender</option>
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Hire Date</label>
+                                            <input type="text" id="hireDate" placeholder="YYYY-MM-DD" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="separator"></div>
+                                <h4 class="section-title">ACCOUNT DETAILS</h4>
+                                <div class="modal-grid">
+                                    <div class="left-column">
+                                        <div class="form-group">
+                                            <label>Email</label>
+                                            <input type="email" id="teacherEmail" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Phone</label>
+                                            <input type="text" id="teacherPhone">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Username</label>
+                                            <input type="text" id="teacherUsername" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="right-column">
+                                        <div class="form-group">
+                                            <label>Department</label>
+                                            <input type="text" id="teacherDepartment">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Specialization</label>
+                                            <input type="text" id="teacherSpecialization">
+                                        </div>
+                                        <div class="form-group password-group">
+                                            <label>Password</label>
+                                            <input type="password" id="teacherPassword" required>
+                                            <i class="fas fa-eye toggle" onclick="togglePW('teacherPassword',this)"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal-buttons">
+                                <button type="submit" class="add-btn">Add Teacher</button>
+                                <button type="button" class="cancel-btn"
+                                    onclick="closeAddTeacherModal()">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- Courses -->
+                <section id="coursesPage" class="hidden">
+                    <h2>Courses</h2>
+                    <p>Manage course records here.</p>
+
+                    <!-- ACTIONS: Search | Filter | Add -->
+                    <div class="table-actions">
+                        <!-- SEARCH -->
+                        <div class="search-container">
+                            <input type="text" id="searchCourseInput" class="search-input"
+                                placeholder="Search courses...">
+                            <button class="search-btn"><i class="fas fa-search"></i></button>
+                        </div>
+
+                        <!-- ADD COURSE BUTTON -->
+                        <div class="filter-sort-add">
+                            <button class="add-btn" onclick="addCourse()">
+                                <i class="fas fa-plus"></i> Add Course
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- COURSES TABLE -->
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllCourses"></th>
+                                    <th>Course Code <i class="fas fa-sort"></i></th>
+                                    <th>Course Name <i class="fas fa-sort"></i></th>
+                                    <th>Course Description</th>
+                                    <th>Units <i class="fas fa-sort"></i></th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="courseTableBody">
+                                <tr>
+                                    <td><input type="checkbox" class="row-select"></td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>
+                                        <button class="edit" onclick="editCourse(this)"><i
+                                                class="fas fa-edit"></i></button>
+                                        <button class="delete" onclick="deleteCourse(this)"><i
+                                                class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- ADD COURSE MODAL -->
+                    <div id="addCourseModal" class="modal">
+                        <div class="modal-content">
+                            <h2>Add New Course</h2>
+
+                            <div class="modal-scroll-area">
+                                <div class="modal-grid">
+                                    <div class="left-column">
+                                        <div class="form-group">
+                                            <label>Course Code</label>
+                                            <input type="text" id="courseCode" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Course Name</label>
+                                            <input type="text" id="courseName" required>
+                                        </div>
+                                    </div>
+                                    <div class="right-column">
+                                        <div class="form-group">
+                                            <label>Course Description</label>
+                                            <input type="text" id="courseDescription">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Units</label>
+                                            <input type="number" id="courseUnits" min="0" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal-buttons">
+                                <button type="submit" class="add-btn">Add Course</button>
+                                <button type="button" class="cancel-btn" onclick="closeAddCourseModal()">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- Reports -->
+                <section id="reportsPage" class="hidden">
+                    <h2>Reports</h2>
+                    <p>Generate and view reports for students, teachers, and courses.</p>
+
+                    <!-- Report Selection -->
+                    <div class="reports-actions">
+                        <label for="reportType">Select Report:</label>
+                        <select id="reportType">
+                            <option value="students">Students Report</option>
+                            <option value="teachers">Teachers Report</option>
+                            <option value="courses">Courses Report</option>
+                        </select>
+
+                        <label for="reportDate">Filter by Date:</label>
+                        <input type="text" id="reportDate" placeholder="YYYY-MM-DD">
+
+                        <button class="generate-btn" onclick="generateReport()">
+                            <i class="fas fa-file-alt"></i> Generate Report
+                        </button>
+                    </div>
+
+                    <!-- Report Viewer -->
+                    <div class="report-viewer">
+                        <!-- This is where the report will be displayed (CrystalReportViewer or iframe) -->
+                        <iframe id="reportFrame" src="" frameborder="0" style="width:100%; height:600px;"></iframe>
+                    </div>
+                </section>
+
+
+
+
+
+                <!-- Logs -->
+                <section id="logsPage" class="hidden">
+                    <h2>Logs</h2>
+                    <p>View system actions and history here.</p>
+
+                    <!-- ACTIONS: Search | Filter | Delete -->
+                    <div class="table-actions">
+                        <!-- SEARCH -->
+                        <div class="search-container">
+                            <input type="text" id="searchLogInput" class="search-input" placeholder="Search logs...">
+                            <button class="search-btn"><i class="fas fa-search"></i></button>
+                        </div>
+
+                        <!-- DATE FILTER -->
+                        <div class="filter-sort-add">
+                            <span>
+                                <label for="filterDate" class="filter-label">Filter by Date: </label>
+                                <input type="date" id="filterDate" class="filter-select">
+                            </span>
+
+                            <button class="delete-btn" onclick="deleteSelectedLogs()">
+                                <i class="fas fa-trash"></i> Delete Selected
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- LOGS TABLE -->
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllLogs"></th>
+                                    <th class="sortable">Date <i class="fas fa-sort"></i></th>
+                                    <th>Action</th>
+                                    <th>Performed By</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logsTableBody">
+                                <tr>
+                                    <td><input type="checkbox" class="row-select"></td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>
+                                        <button class="delete" onclick="deleteLog(this)"><i
+                                                class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+
+
+
+
+
+
+
+                <!-- Archives -->
+                <section id="archivesPage" class="hidden">
+                    <h2>Archives</h2>
+                    <p>View deleted records. You can restore or permanently delete them.</p>
+
+                    <!-- Archive Dropdown -->
+                    <div class="archive-dropdown">
+                        <label for="archiveSelect">Select Archive:</label>
+                        <select id="archiveSelect" onchange="showArchive(this.value)">
+                            <option value="archStudents">Students</option>
+                            <option value="archTeachers">Teachers</option>
+                            <option value="archCourses">Courses</option>
+                        </select>
+                    </div>
+
+                    <!-- Students Archive -->
+                    <div id="archStudents" class="archive-tab">
+                        <div class="table-actions">
+                            <div class="search-container">
+                                <input type="text" class="search-input" placeholder="Search students..."
+                                    onkeyup="filterArchive('archStudents')">
+                                <button class="search-btn"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" class="selectAllArchive" data-tab="archStudents">
+                                        </th>
+                                        <th>Student ID</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Date of Birth</th>
+                                        <th>Age</th>
+                                        <th>Gender</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Address</th>
+                                        <th>Enrollment Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="archStudentsBody">
+                                    <!-- Deleted students will appear here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Teachers Archive -->
+                    <div id="archTeachers" class="archive-tab hidden">
+                        <div class="table-actions">
+                            <div class="search-container">
+                                <input type="text" class="search-input" placeholder="Search teachers..."
+                                    onkeyup="filterArchive('archTeachers')">
+                                <button class="search-btn"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" class="selectAllArchive" data-tab="archTeachers">
+                                        </th>
+                                        <th>Teacher ID</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Date of Birth</th>
+                                        <th>Gender</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Hire Date</th>
+                                        <th>Department</th>
+                                        <th>Specialization</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="archTeachersBody">
+                                    <!-- Deleted teachers will appear here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Courses Archive -->
+                    <div id="archCourses" class="archive-tab hidden">
+                        <div class="table-actions">
+                            <div class="search-container">
+                                <input type="text" class="search-input" placeholder="Search courses..."
+                                    onkeyup="filterArchive('archCourses')">
+                                <button class="search-btn"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" class="selectAllArchive" data-tab="archCourses"></th>
+                                        <th>Course Code</th>
+                                        <th>Course</th>
+                                        <th>Course Description</th>
+                                        <th>Units</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="archCoursesBody">
+                                    <!-- Deleted courses will appear here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+</body>
+
+</html>

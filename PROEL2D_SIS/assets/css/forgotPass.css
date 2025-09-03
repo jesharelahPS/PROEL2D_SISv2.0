@@ -1,0 +1,210 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #f6f0e8;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 400px;
+    padding: 40px 30px;
+    background: #faf6f1;
+    border-radius: 10px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.logo {
+    display: block;
+    margin: 0 auto 20px;
+    max-width: 100px;
+    margin-bottom: -20px;
+}
+
+.login-title {
+    font-family: 'Cinzel', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #4b0e12;
+    text-align: center;
+}
+
+.tagline {
+    font-size: 14px;
+    color: #6c5c4c;
+    text-align: center;
+    line-height: 1.5;
+    margin-top: -20px;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Floating Inputs */
+.floating {
+    position: relative;
+}
+
+.floating input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #b87333;
+    border-radius: 6px;
+    font-size: 15px;
+    background: #faf6f1;
+    outline: none;
+    transition: .25s;
+}
+
+.floating input:focus {
+    border: 1px solid #ffd700;
+    background: #fffbe6;
+}
+
+.floating label {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #6c5c4c;
+    font-size: 14px;
+    transition: .2s;
+    background: #faf6f1;
+    padding: 0 4px;
+}
+
+.floating input:focus+label,
+.floating input:not(:placeholder-shown)+label {
+    top: -8px;
+    font-size: 12px;
+    color: #4b0e12;
+}
+
+/* CAPTCHA */
+.captcha-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.captcha-image {
+    height: 50px;
+    border: 1px solid #b87333;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: #4b0e12;
+    background: #faf6f1;
+}
+
+/* Verification code */
+.verification-codes {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.code-box {
+    width: 45px;
+    height: 50px;
+    text-align: center;
+    font-size: 20px;
+    border: 1px solid #b87333;
+    border-radius: 6px;
+    outline: none;
+    background: #faf6f1;
+}
+
+/* Buttons */
+button {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    background: #4b0e12;
+    color: #ffd700;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform .2s, opacity .25s;
+}
+
+button:hover {
+    transform: scale(1.02);
+    opacity: 0.9;
+}
+
+/* Password toggle */
+.password-container {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    color: #4b0e12;
+}
+
+
+.forgot {
+    display: block;
+    text-align: center;
+    margin: 20px auto 0;
+    font-size: 14px;
+    color: #4b0e12;
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.forgot:hover {
+    opacity: 0.8;
+}
+
+
+/* General error messages */
+.lockout-message {
+    margin: 5px 0;
+    text-align: center;
+    font-size: 14px;
+    color: red;
+}
+
+/* OTP-specific error right below the OTP boxes */
+.lockout-message.errorOTP {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+/* Status / resend messages */
+.verification-message {
+    margin: 5px 0 10px 0;
+    text-align: center;
+    font-size: 14px;
+    color: #4b0e12;
+}
